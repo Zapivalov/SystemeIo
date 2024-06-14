@@ -1,0 +1,23 @@
+services:
+    sio_test:
+        user: app
+        build:
+            context: .
+            args:
+                USER_ID: ${USER_ID}
+        ports:
+            - "8337:8337"
+        volumes:
+            - .:/app:rw
+        environment:
+            - APP_ENV=dev
+
+    database:
+        image: mysql:${MYSQL_VERSION}
+        environment:
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+        volumes:
+            - './docker/volume/mysql/db:/var/lib/mysql'
+        ports:
+            - "3306:3306"
