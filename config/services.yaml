@@ -16,3 +16,18 @@ services:
     App\EventListener\CustomExceptionListener:
         tags:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
+
+    App\Adapter\PaypalPaymentProcessorAdapter:
+        arguments:
+            - !service
+                class: Systemeio\TestForCandidates\PaymentProcessor\PaypalPaymentProcessor
+
+    App\Adapter\StripePaymentProcessorAdapter:
+        arguments:
+            - !service
+                class: Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor
+
+    App\Registry\PaymentProcessorRegistry:
+        calls:
+            - register: [ 'paypal', '@App\Adapter\PaypalPaymentProcessorAdapter' ]
+            - register: [ 'stripe', '@App\Adapter\StripePaymentProcessorAdapter' ]
