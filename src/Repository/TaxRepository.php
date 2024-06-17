@@ -28,7 +28,7 @@ class TaxRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getByTaxNumber(string $taxNumber): ?Tax
+    public function getByTaxNumber(string $taxNumber): Tax
     {
         $tax = $this->findByTaxNumber($taxNumber);
 

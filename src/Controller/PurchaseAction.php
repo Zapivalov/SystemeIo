@@ -6,7 +6,7 @@ namespace App\Controller;
 
 use App\Dto\PurchaseRequest;
 use App\Registry\PaymentProcessorRegistry;
-use App\Service\PriceCalculatorInterface;
+use App\Service\PriceCalculator;
 use App\Transformer\PaymentStatusTransformer;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,19 +24,23 @@ use Throwable;
 final class PurchaseAction extends AbstractController
 {
     public function __construct(
-        private readonly PriceCalculatorInterface $priceCalculator,
+        private readonly PriceCalculator $priceCalculator,
         private readonly PaymentProcessorRegistry $processorRegistry,
         private readonly PaymentStatusTransformer $statusTransformer,
     ) {
     }
 
     public function __invoke(
-        #[MapRequestPayload] PurchaseRequest $purchaseRequest,
+        #[MapRequestPayload] PurchaseRequest $request,
     ): JsonResponse
     {
         try {
-            $price = $this->priceCalculator->calculateFinalPrice($purchaseRequest);
-            $paymentProcessor = $this->processorRegistry->resolve($purchaseRequest->getPaymentProcessor());
+            $price = $this->priceCalculator->calculateFinalPrice(
+                $request->getProductId(),
+                $request->getTaxNumber(),
+                $request->getCouponCode()
+            );
+            $paymentProcessor = $this->processorRegistry->resolve($request->getPaymentProcessor());
             $paymentResult = $paymentProcessor->pay($price);
 
 

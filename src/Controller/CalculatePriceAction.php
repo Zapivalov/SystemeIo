@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Dto\CalculatePriceRequest;
-use App\Service\PriceCalculatorInterface;
+use App\Service\PriceCalculator;
 use App\Transformer\PriceTransformer;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,16 +23,20 @@ use Throwable;
 final class CalculatePriceAction extends AbstractController
 {
     public function __construct(
-        private readonly PriceCalculatorInterface $priceCalculator,
+        private readonly PriceCalculator $priceCalculator,
         private readonly PriceTransformer $priceTransformer,
     ) {
     }
 
     public function __invoke(
-        #[MapRequestPayload] CalculatePriceRequest $calculatePriceRequest,
+        #[MapRequestPayload] CalculatePriceRequest $request,
     ): JsonResponse {
         try {
-            $price = $this->priceCalculator->calculateFinalPrice($calculatePriceRequest);
+            $price = $this->priceCalculator->calculateFinalPrice(
+                $request->getProductId(),
+                $request->getTaxNumber(),
+                $request->getCouponCode()
+            );
 
             return new JsonResponse($this->priceTransformer->transform($price));
         } catch (Throwable $e) {

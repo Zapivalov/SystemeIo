@@ -9,7 +9,7 @@ use App\Validator\ValidProduct;
 use App\Validator\ValidTax;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class PurchaseRequest implements PriceRequestInterface
+final class PurchaseRequest
 {
     public function __construct(
 

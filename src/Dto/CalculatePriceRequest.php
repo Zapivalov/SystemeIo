@@ -8,7 +8,7 @@ use App\Validator\ValidCoupon;
 use App\Validator\ValidProduct;
 use App\Validator\ValidTax;
 
-final class CalculatePriceRequest implements PriceRequestInterface
+final class CalculatePriceRequest
 {
     public function __construct(
 
