@@ -18,16 +18,21 @@ services:
             - { name: 'kernel.event_listener', event: 'kernel.exception' }
 
     App\Adapter\PaypalPaymentProcessorAdapter:
+        tags:
+            - { name: 'app.payment_provider', key: 'paypal' }
         arguments:
             - !service
                 class: Systemeio\TestForCandidates\PaymentProcessor\PaypalPaymentProcessor
 
     App\Adapter\StripePaymentProcessorAdapter:
+        tags:
+            - { name: 'app.payment_provider', key: 'stripe' }
         arguments:
             - !service
                 class: Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor
 
     App\Registry\PaymentProcessorRegistry:
-        calls:
-            - register: [ 'paypal', '@App\Adapter\PaypalPaymentProcessorAdapter' ]
-            - register: [ 'stripe', '@App\Adapter\StripePaymentProcessorAdapter' ]
+        arguments:
+            $locator: !tagged_locator
+                tag: 'app.payment_provider'
+                index_by: 'key'

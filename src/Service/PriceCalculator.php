@@ -46,14 +46,10 @@ final class PriceCalculator
             return 0.0;
         }
 
-        if ($coupon->getDiscountType() === CouponDiscountType::percentage->name) {
-            return $basePrice * ($coupon->getValue() / 100);
-        }
-
-        if ($coupon->getDiscountType() === CouponDiscountType::fixed->name) {
-            return $coupon->getValue();
-        }
-
-        return 0.0;
+        return match ($coupon->getDiscountType()){
+            CouponDiscountType::percentage->name => $basePrice * ($coupon->getValue() / 100),
+            CouponDiscountType::fixed->name => $coupon->getValue(),
+            default => 0.0,
+        };
     }
 }
